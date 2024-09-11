@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react';
 import ImageUpload from './components/ImageUpload';
+// code字符串渲染视图的核心组件
 import Preview from './components/Preview';
 import { CodeGenerationParams, generateCode } from './generateCode';
 import classNames from 'classnames';
@@ -66,7 +67,7 @@ function App({ Config }: { Config?: FunctionComponent }) {
 
     // App history
     const [appHistory, setAppHistory] = useState<History>([]);
-    // Tracks the currently shown version from app history
+    // 通过历史版本信息，并确定当前显示的版本
     const [currentVersion, setCurrentVersion] = useState<number | null>(null);
 
     const [shouldIncludeResultImage, setShouldIncludeResultImage] = useState<boolean>(false);
@@ -133,6 +134,11 @@ function App({ Config }: { Config?: FunctionComponent }) {
         setAppState(AppState.CODE_READY);
     };
 
+    /**
+     * 生成代码核心方法
+     * @param params 
+     * @param parentVersion 
+     */
     function doGenerateCode(params: CodeGenerationParams, parentVersion: number | null) {
         setExecutionConsole([]);
         setAppState(AppState.CODING);
@@ -188,13 +194,17 @@ function App({ Config }: { Config?: FunctionComponent }) {
         );
     }
 
-    // Initial version creation
+    /**
+     * 上传图片的回调
+     * @param referenceImages
+     */
     function doCreate(referenceImages: string[]) {
         // Reset any existing state
         reset();
 
         setReferenceImages(referenceImages);
         if (referenceImages.length > 0) {
+            // 开始执行生成代码
             doGenerateCode(
                 {
                     generationType: 'create',
@@ -244,6 +254,9 @@ function App({ Config }: { Config?: FunctionComponent }) {
     }
     const [visible, setVisible] = React.useState(false);
     const { t } = useTranslation('draw');
+    /**
+     * 左列操作菜单
+     */
     const operationSession = (
         <div>
             <div className="grid col-span-1 gap-1 ml-[20px]">
@@ -340,6 +353,7 @@ function App({ Config }: { Config?: FunctionComponent }) {
                 {/* (appState === AppState.CODING || appState === AppState.CODE_READY) && */}
                 {
                     <div className="ml-4">
+                        {/* Header 头部栏 */}
                         <div className="mx-8 mb-2 flex justify-between items-center">
                             <OutputSettingsSection
                                 generatedCodeConfig={settings.generatedCodeConfig}
@@ -387,12 +401,14 @@ function App({ Config }: { Config?: FunctionComponent }) {
                                 />
                             </div>
                         </div>
+                        {/* Main：主要操作区 */}
                         <ATabs
                             type="card-gutter"
                             className={'mx-8 mb-2 mt-[5px] Draw'}
                             // tabPosition="right"
                             // direction="vertical"
                         >
+                            {/* 1、桌面菜单 */}
                             <TabPane
                                 className="mt-[20px] h-[80vh] flex flex-col justify-center"
                                 key="desktop"
@@ -402,6 +418,7 @@ function App({ Config }: { Config?: FunctionComponent }) {
                                     </div>
                                 }
                             >
+                                {/* 未上传图0 */}
                                 {appState === AppState.INITIAL ? (
                                     <div className="flex flex-col justify-center items-center gap-y-10 w-full">
                                         <ImageUpload setReferenceImages={doCreate} />
@@ -411,8 +428,11 @@ function App({ Config }: { Config?: FunctionComponent }) {
                                         />
                                     </div>
                                 ) : (
+                                    // 已上传图片状态1
                                     <div className="flex  w-full">
+                                        {/* 左列操作菜单 */}
                                         {operationSession}
+                                        {/** 代码渲染预览区 */}
                                         <Preview
                                             code={generatedCode}
                                             device="desktop"
@@ -422,6 +442,7 @@ function App({ Config }: { Config?: FunctionComponent }) {
                                     </div>
                                 )}
                             </TabPane>
+                            {/* 2、移动手机菜单 */}
                             <TabPane
                                 className="mt-[20px]  h-[80vh] flex flex-col justify-center"
                                 key="mobile"
@@ -451,6 +472,7 @@ function App({ Config }: { Config?: FunctionComponent }) {
                                     </div>
                                 )}
                             </TabPane>
+                            {/* 3、代码菜单 */}
                             <TabPane
                                 className="mt-[20px] h-[80vh]"
                                 key="code"

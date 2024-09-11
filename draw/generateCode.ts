@@ -21,9 +21,13 @@ const textDecoder = new TextDecoder('utf-8');
 export const generateCode = debounce(function (
     wsRef: React.MutableRefObject<AbortController | null>,
     params: CodeGenerationParams,
+    /** 流式代码片段的回调函数 */
     onChange: (chunk: string) => void,
+    /** 最后完整代码的回调函数 */
     onSetCode: (code: string) => void,
+    /** 状态更新回调函数 */
     onStatusUpdate: (status: string) => void,
+    /** 会话结束回调函数 */
     onComplete: () => void
 ) {
     wsRef.current = new AbortController();

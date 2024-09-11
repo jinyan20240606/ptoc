@@ -66,6 +66,7 @@ function ImageUpload({ setReferenceImages }: Props) {
             'image/jpg': ['.jpg'],
         },
         onDrop: acceptedFiles => {
+            console.log(acceptedFiles, '1、上传的初始图片文件对象信息')
             // Set up the preview thumbnail images
             setFiles(
                 acceptedFiles.map((file: File) =>
@@ -76,8 +77,10 @@ function ImageUpload({ setReferenceImages }: Props) {
             );
 
             // Convert images to data URLs and set the prompt images state
+            // 图片File对象转成database64格式
             Promise.all(acceptedFiles.map(file => fileToDataURL(file)))
                 .then(dataUrls => {
+                    console.log('2、图片File对象转成database64格式', dataUrls)
                     setReferenceImages(dataUrls.map(dataUrl => dataUrl as string));
                 })
                 .catch(error => {

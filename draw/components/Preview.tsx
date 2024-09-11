@@ -14,6 +14,7 @@ interface Props {
     stop: () => any;
 }
 
+/** 大模型code字符串渲染视图的核心组件 */
 function Preview({ code, device, appState, stop }: Props) {
     const throttledCode = useThrottle(code, 200);
     const iframeRef = useRef<HTMLIFrameElement | null>(null);

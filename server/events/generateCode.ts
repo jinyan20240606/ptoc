@@ -29,7 +29,9 @@ export async function streamGenerateCode(
             socket.enqueue(encoder.encode(`${JSON.stringify(data)}\n`));
         }
     }
+    console.log(params, 'streamGenerateCode---params--------')
     const generated_code_config = params['generatedCodeConfig'];
+    // 1、获取完整Prompt提示词
     let prompt_messages;
     try {
         if (params['resultImage']) {
@@ -54,6 +56,7 @@ export async function streamGenerateCode(
         });
     }
 
+    // 2、检查加入历史上下文
     if (params['generationType'] === 'update') {
         const history = params['history'];
         history.forEach((item, index) => {
@@ -64,7 +67,9 @@ export async function streamGenerateCode(
         });
     }
 
+    // 3、调用大模型生产结果
     let completion;
+    // 是否传的要求mock响应结果，不是就正常请求大模型
     const SHOULD_MOCK_AI_RESPONSE = params['mockAiResponse'];
     if (SHOULD_MOCK_AI_RESPONSE) {
         completion = await mockComletion((content: string) => {
@@ -105,6 +110,7 @@ export async function streamGenerateCode(
         }
     }
     const updated_html = completion;
+    // setCode类型：是最后完整的响应代码，chunk是响应代码片段
     noticeHost({
         type: 'setCode',
         value: updated_html,
